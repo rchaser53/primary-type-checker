@@ -1,0 +1,33 @@
+{
+  "name": "primary-type-checker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "pretsc": "rm -rf dist",
+    "tsc": "tsc -p .",
+    "build": "npm run tsc && node dist/index.js",
+    "prettier": "prettier  --write \"**/*.{js,ts,json}\"",
+    "prettier-check": "prettier \"**/*.{js,ts,json}\" --check",
+    "test": "jest test --no-cache"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rchaser53/primary-type-checker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rchaser53/primary-type-checker/issues"
+  },
+  "homepage": "https://github.com/rchaser53/primary-type-checker#readme",
+  "devDependencies": {
+    "@babel/parser": "^7.3.1",
+    "@types/jest": "^23.3.13",
+    "@types/node": "^10.12.18",
+    "jest": "^24.0.0",
+    "prettier": "^1.16.0",
+    "typescript": "^3.2.4"
+  }
+}
