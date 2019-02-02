@@ -11,7 +11,7 @@ export const testError = (input: string) => {
   })
 
   return symbolCreator.currentScope.defs.reduce<ErrorType[]>((stack, def) => {
-    return typeof def.type !== 'string' ? stack.concat([def.type]) : stack
+    return typeof def.type !== 'string' ? stack.concat([def.type as ErrorType]) : stack
   }, [])
 }
 
@@ -174,7 +174,7 @@ describe('symbolCreator', () => {
       let c = null
       let d = undefined
       let e = 1
-      let e = Symbol('abc')
+      let f = Symbol('abc')
       `
       const actual = testError(input)
       const expected = []

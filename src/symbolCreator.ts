@@ -1,6 +1,13 @@
 import { PrimitiveType, resolvePrimitiveType } from './types'
 import { createLeftIsNotRight, createCannotBinaryOp, ErrorType } from './errors'
-import { Definiton, Scope, Scopes, VariableType } from './scope'
+import { Definiton, Unknown, Scope, Scopes, VariableType } from './scope'
+
+export enum NodeType {
+  VariableDeclaration = 'VariableDeclaration',
+  BlockStatement = 'BlockStatement',
+  BinaryExpression = 'BinaryExpression',
+  Identifier = 'Identifier'
+}
 
 export default class SymbolCreator {
   currentScope: Scope
@@ -14,10 +21,10 @@ export default class SymbolCreator {
 
   walkNode(node) {
     switch (node.type) {
-      case 'VariableDeclaration':
+      case NodeType.VariableDeclaration:
         this.resolveVariableDeclaration(node)
         break
-      case 'BlockStatement':
+      case NodeType.BlockStatement:
         this.resolveBlockStatement(node)
         break
       default:
@@ -43,7 +50,7 @@ export default class SymbolCreator {
   resolveBinaryExpression(left, right): PrimitiveType {
     let leftType = left.type
     switch (left.type) {
-      case 'BinaryExpression':
+      case NodeType.BinaryExpression:
         leftType = this.resolveBinaryExpression(left.left, left.right)
         break
       default:
@@ -56,7 +63,7 @@ export default class SymbolCreator {
 
     let rightType = right.type
     switch (right.type) {
-      case 'BinaryExpression':
+      case NodeType.BinaryExpression:
         rightType = this.resolveBinaryExpression(right.left, right.right)
         break
       default:
@@ -75,11 +82,15 @@ export default class SymbolCreator {
 
     let type: VariableType = PrimitiveType.Undefined
     switch (init.type) {
-      case 'BinaryExpression':
+      case NodeType.BinaryExpression:
         try {
           type = this.resolveBinaryExpression(init.left, init.right)
         } catch (err) {
-          type = err as ErrorType
+          type = err as ErrorType | Unknown
+        }
+        break
+      case NodeType.Identifier:
+          type = { astId: this.currentScope.id }
         }
         break
       default:

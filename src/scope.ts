@@ -1,7 +1,10 @@
 import { PrimitiveType } from './types'
 import { ErrorType } from './errors'
 
-export type VariableType = PrimitiveType | ErrorType
+export type Unknown = {
+  astId: number
+}
+export type VariableType = PrimitiveType | ErrorType | Unknown
 
 export type Scopes = Scope[]
 
