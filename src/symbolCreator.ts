@@ -1,5 +1,5 @@
 import { PrimitiveType, resolvePrimitiveType } from './types'
-import { createLeftIsNotRight } from './errors'
+import { createLeftIsNotRight, createCannotBinaryOp } from './errors'
 
 export default class SymbolCreator {
   errorStack: string[]
@@ -35,6 +35,12 @@ export default class SymbolCreator {
         break
       default:
         break
+    }
+
+    // 型チェック
+    if (leftType !== PrimitiveType.Number && leftType !== PrimitiveType.String) {
+      this.errorStack.push(createCannotBinaryOp(leftType))
+      throw new Error('escape to setEnvironmet')
     }
 
     let rightType = right.type
