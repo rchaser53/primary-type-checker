@@ -90,6 +90,10 @@ export default class SymbolCreator {
         }
         break
       case NodeType.Identifier:
+        // undefined is Identifier
+        if (init.name === 'undefined') {
+          type = PrimitiveType.Undefined
+        } else {
           type = { astId: this.currentScope.id }
         }
         break
