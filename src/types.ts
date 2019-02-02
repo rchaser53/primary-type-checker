@@ -1,7 +1,7 @@
 export enum PrimitiveType {
-  Number = 'Number',
-  String = 'String',
-  Boolean = 'Boolean',
+  Number = 'NumericLiteral',
+  String = 'StringLiteral',
+  Boolean = 'BooleanLiteral',
   Null = 'Null',
   Undefined = 'Undefined',
   Symbol = 'Symbol',
