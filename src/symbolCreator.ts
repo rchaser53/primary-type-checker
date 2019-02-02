@@ -1,13 +1,9 @@
 import { PrimitiveType, resolvePrimitiveType } from './types'
-import { createLeftIsNotRight, createCannotBinaryOp } from './errors'
+import { createLeftIsNotRight, createCannotBinaryOp, ErrorType } from './errors'
+
+export type VariableType = PrimitiveType | ErrorType
 
 export default class SymbolCreator {
-  errorStack: string[]
-
-  constructor(errorStack: string[]) {
-    this.errorStack = errorStack
-  }
-
   walkNode(envs, node) {
     switch (node.type) {
       case 'VariableDeclaration':
@@ -39,8 +35,7 @@ export default class SymbolCreator {
 
     // 型チェック
     if (leftType !== PrimitiveType.Number && leftType !== PrimitiveType.String) {
-      this.errorStack.push(createCannotBinaryOp(leftType))
-      throw new Error('escape to setEnvironmet')
+      throw createCannotBinaryOp(leftType)
     }
 
     let rightType = right.type
@@ -53,8 +48,7 @@ export default class SymbolCreator {
     }
 
     if (leftType !== rightType) {
-      this.errorStack.push(createLeftIsNotRight(leftType, rightType))
-      throw new Error('escape to setEnvironmet')
+      throw createLeftIsNotRight(leftType, rightType)
     }
 
     return leftType
@@ -63,27 +57,30 @@ export default class SymbolCreator {
   setEnvironment(envs, node) {
     const { id, init } = node.declarations[0] // why Array?
 
-    let type = PrimitiveType.Undefined
+    let type: VariableType = PrimitiveType.Undefined
     switch (init.type) {
       case 'BinaryExpression':
         try {
           type = this.resolveBinaryExpression(init.left, init.right)
-        } catch (_) {
-          return
+        } catch (err) {
+          type = err as ErrorType
         }
         break
       default:
         type = resolvePrimitiveType(init.value)
         break
     }
-    const count = envs.filter((declare) => {
-      return declare.name === id.name
-    }).length
 
     envs.push({
       name: id.name,
       type,
-      count
+      count: this.calculateDeclareCount(envs, id.name)
     })
+  }
+
+  calculateDeclareCount(envs, name: string): number {
+    return envs.filter((declare) => {
+      return declare.name === name
+    }).length
   }
 }

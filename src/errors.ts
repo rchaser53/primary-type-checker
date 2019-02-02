@@ -1,7 +1,18 @@
-export const createLeftIsNotRight = (leftType, rightType): string => {
-  return `${leftType} cannot be calculate ${rightType}`
+export const createLeftIsNotRight = (leftType, rightType): ErrorType => {
+  return {
+    code: 1,
+    message: `${leftType} cannot be calculate ${rightType}`
+  }
 }
 
-export const createCannotBinaryOp = (leftType): string => {
-  return `${leftType} cannot be used binary operation`
+export const createCannotBinaryOp = (leftType): ErrorType => {
+  return {
+    code: 2,
+    message: `${leftType} cannot be used binary operation`,
+  }
+}
+
+export type ErrorType = {
+  code: number
+  message: string
 }

@@ -5,7 +5,6 @@ export enum PrimitiveType {
   Null = 'Null',
   Undefined = 'Undefined',
   Symbol = 'Symbol',
-  ErrorType = 'Error' // should not be here
 }
 
 export const resolvePrimitiveType = (value): PrimitiveType => {

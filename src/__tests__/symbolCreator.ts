@@ -3,35 +3,40 @@ import SymbolCreator from '../symbolCreator'
 import { createCannotBinaryOp, createLeftIsNotRight } from '../errors'
 import { PrimitiveType } from '../types'
 
+export const setup = (input: string) => {
+  const envs: any[] = [];
+  const symbolCreator = new SymbolCreator()
+  const program = parse(input).program
+  program.body.forEach((node) => {
+    symbolCreator.walkNode(envs, node)
+  })
+
+  return envs.reduce((stack, env) => {
+    return typeof env.type !== 'string'
+      ? stack.concat([env.type]) 
+      : stack
+  }, [])
+}
+
 describe('symbolCreator', () => {
   it('let a = 1 + "str"; is error', () => {
     const input = 'let a = 1 + "str"'
-    const symbolCreator = new SymbolCreator([])
-
-    const program = parse(input).program
-    program.body.forEach((node) => {
-      symbolCreator.walkNode([], node)
-    })
-
+    
+    const actual = setup(input)
     const expected = [
       createLeftIsNotRight(PrimitiveType.Number, PrimitiveType.String)
     ]
-    expect(expected).toEqual(symbolCreator.errorStack)
+    expect(actual).toEqual(expected)
   })
 
   it('let a = true + "str"; is error', () => {
     const input = 'let a = true + "str";'
-    const symbolCreator = new SymbolCreator([])
 
-    const program = parse(input).program
-    program.body.forEach((node) => {
-      symbolCreator.walkNode([], node)
-    })
-
+    const actual = setup(input)
     const expected = [
       createCannotBinaryOp(PrimitiveType.Boolean)
     ]
-    expect(expected).toEqual(symbolCreator.errorStack)
+    expect(actual).toEqual(expected)
   })
 
   it('no emit error when it declare correctly', () => {
@@ -43,15 +48,9 @@ describe('symbolCreator', () => {
     let e = 1
     let e = Symbol('abc')
     `
-    const symbolCreator = new SymbolCreator([])
-
-    const program = parse(input).program
-    program.body.forEach((node) => {
-      symbolCreator.walkNode([], node)
-    })
-
+    const actual = setup(input)
     const expected = []
-    expect(expected).toEqual(symbolCreator.errorStack)
+    expect(actual).toEqual(expected)
   })
 
   it('no emit error when it calculates correctly', () => {
@@ -62,14 +61,8 @@ describe('symbolCreator', () => {
     let d = (4 + 5) * (3 - 2)
     let e = "abc" + "def"
     `
-    const symbolCreator = new SymbolCreator([])
-
-    const program = parse(input).program
-    program.body.forEach((node) => {
-      symbolCreator.walkNode([], node)
-    })
-
+    const actual = setup(input)
     const expected = []
-    expect(expected).toEqual(symbolCreator.errorStack)
+    expect(actual).toEqual(expected)
   })
 })
