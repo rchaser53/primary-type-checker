@@ -8,7 +8,7 @@ export const createLeftIsNotRight = (leftType, rightType): ErrorType => {
 export const createCannotBinaryOp = (leftType): ErrorType => {
   return {
     code: 2,
-    message: `${leftType} cannot be used binary operation`,
+    message: `${leftType} cannot be used binary operation`
   }
 }
 

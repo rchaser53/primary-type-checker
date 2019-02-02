@@ -12,11 +12,11 @@ export type Definiton = {
 }
 
 export class Scope {
-  id: number;
+  id: number
   parentId: number | null
   defs: Definiton[] = []
   constructor(id: number, parentId: number | null) {
     this.id = id
-    this.parentId =parentId
+    this.parentId = parentId
   }
 }

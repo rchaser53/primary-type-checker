@@ -15,26 +15,29 @@ export default class SymbolCreator {
   walkNode(node) {
     switch (node.type) {
       case 'VariableDeclaration':
-        this.setEnvironment(node)
+        this.resolveVariableDeclaration(node)
         break
       case 'BlockStatement':
-        console.log(node.type, 'block')
-
-        const scope = new Scope(this.idCounter++, this.currentScope.id)
-        const lastScope = this.currentScope
-        
-        this.currentScope = scope;
-        node.body.forEach((innerNode) => {
-          this.walkNode(innerNode)
-        })
-        this.currentScope = lastScope
-
-        this.scopes.push(scope)
+        this.resolveBlockStatement(node)
         break
       default:
         console.log(node)
         break
     }
+  }
+
+  resolveBlockStatement(node) {
+    const scope = new Scope(this.idCounter++, this.currentScope.id)
+    node.id = scope.id // think this more deeply
+    const lastScope = this.currentScope
+
+    this.currentScope = scope
+    node.body.forEach((innerNode) => {
+      this.walkNode(innerNode)
+    })
+    this.currentScope = lastScope
+
+    this.scopes.push(scope)
   }
 
   resolveBinaryExpression(left, right): PrimitiveType {
@@ -47,7 +50,6 @@ export default class SymbolCreator {
         break
     }
 
-    // 型チェック
     if (leftType !== PrimitiveType.Number && leftType !== PrimitiveType.String) {
       throw createCannotBinaryOp(leftType)
     }
@@ -68,7 +70,7 @@ export default class SymbolCreator {
     return leftType
   }
 
-  setEnvironment(node) {
+  resolveVariableDeclaration(node) {
     const { id, init } = node.declarations[0] // why Array?
 
     let type: VariableType = PrimitiveType.Undefined
