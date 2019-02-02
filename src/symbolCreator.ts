@@ -1,21 +1,35 @@
 import { PrimitiveType, resolvePrimitiveType } from './types'
 import { createLeftIsNotRight, createCannotBinaryOp, ErrorType } from './errors'
-
-export type VariableType = PrimitiveType | ErrorType
+import { Definiton, Scope, Scopes, VariableType } from './scope'
 
 export default class SymbolCreator {
-  walkNode(envs, node) {
+  currentScope: Scope
+  idCounter: number = 1
+  scopes: Scopes = []
+
+  constructor() {
+    this.currentScope = new Scope(this.idCounter++, null) // set global scope
+    this.scopes.push(this.currentScope)
+  }
+
+  walkNode(node) {
     switch (node.type) {
       case 'VariableDeclaration':
-        this.setEnvironment(envs, node)
+        this.setEnvironment(node)
         break
       case 'BlockStatement':
         console.log(node.type, 'block')
-        const innerEnv = []
+
+        const scope = new Scope(this.idCounter++, this.currentScope.id)
+        const lastScope = this.currentScope
+        
+        this.currentScope = scope;
         node.body.forEach((innerNode) => {
-          this.walkNode(innerEnv, innerNode)
+          this.walkNode(innerNode)
         })
-        envs.push(innerEnv)
+        this.currentScope = lastScope
+
+        this.scopes.push(scope)
         break
       default:
         console.log(node)
@@ -54,7 +68,7 @@ export default class SymbolCreator {
     return leftType
   }
 
-  setEnvironment(envs, node) {
+  setEnvironment(node) {
     const { id, init } = node.declarations[0] // why Array?
 
     let type: VariableType = PrimitiveType.Undefined
@@ -71,16 +85,16 @@ export default class SymbolCreator {
         break
     }
 
-    envs.push({
+    this.currentScope.defs.push({
       name: id.name,
       type,
-      count: this.calculateDeclareCount(envs, id.name)
+      count: this.calculateDeclareCount(this.currentScope.defs, id.name)
     })
   }
 
-  calculateDeclareCount(envs, name: string): number {
-    return envs.filter((declare) => {
-      return declare.name === name
+  calculateDeclareCount(defs: Definiton[], name: string): number {
+    return defs.filter((def) => {
+      return def.name === name
     }).length
   }
 }

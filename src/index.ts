@@ -8,8 +8,7 @@ let a = () => {
 `
 const symbolCreator = new SymbolCreator()
 
-let baseEnv = []
 const program = parse(input).program
 program.body.forEach((node) => {
-  symbolCreator.walkNode(baseEnv, node)
+  symbolCreator.walkNode(node)
 })

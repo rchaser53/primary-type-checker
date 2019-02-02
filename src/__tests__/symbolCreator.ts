@@ -1,19 +1,18 @@
 const { parse } = require('@babel/parser')
 import SymbolCreator from '../symbolCreator'
-import { createCannotBinaryOp, createLeftIsNotRight } from '../errors'
+import { createCannotBinaryOp, createLeftIsNotRight, ErrorType } from '../errors'
 import { PrimitiveType } from '../types'
 
 export const setup = (input: string) => {
-  const envs: any[] = [];
   const symbolCreator = new SymbolCreator()
   const program = parse(input).program
   program.body.forEach((node) => {
-    symbolCreator.walkNode(envs, node)
+    symbolCreator.walkNode(node)
   })
 
-  return envs.reduce((stack, env) => {
-    return typeof env.type !== 'string'
-      ? stack.concat([env.type]) 
+  return symbolCreator.currentScope.defs.reduce<ErrorType[]>((stack, def) => {
+    return typeof def.type !== 'string'
+      ? stack.concat([def.type])
       : stack
   }, [])
 }
