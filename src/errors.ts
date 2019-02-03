@@ -12,6 +12,13 @@ export const createCannotBinaryOp = (leftType): ErrorType => {
   }
 }
 
+export const createUnknownIdentifier = (name: string): ErrorType => {
+  return {
+    code: 3,
+    message: `cannot find ${name}`
+  }
+}
+
 export type ErrorType = {
   code: number
   message: string

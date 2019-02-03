@@ -1,6 +1,7 @@
 import { PrimitiveType, resolvePrimitiveType } from './types'
 import { createLeftIsNotRight, createCannotBinaryOp, ErrorType } from './errors'
 import { Definiton, Unknown, Scope, Scopes, VariableType } from './scope'
+import { GlobalScopeId } from './constants'
 
 export enum NodeType {
   VariableDeclaration = 'VariableDeclaration',
@@ -11,7 +12,7 @@ export enum NodeType {
 
 export default class SymbolCreator {
   currentScope: Scope
-  idCounter: number = 1
+  idCounter: number = GlobalScopeId
   scopes: Scopes = []
 
   constructor() {
@@ -35,7 +36,7 @@ export default class SymbolCreator {
 
   resolveBlockStatement(node) {
     const scope = new Scope(this.idCounter++, this.currentScope.id)
-    node.id = scope.id // think this more deeply
+    // node.id = scope.id // think this more deeply
     const lastScope = this.currentScope
 
     this.currentScope = scope
@@ -96,6 +97,7 @@ export default class SymbolCreator {
         } else {
           type = { astId: this.currentScope.id }
         }
+        init.scopeId = this.currentScope.id
         break
       default:
         type = resolvePrimitiveType(init.value)
