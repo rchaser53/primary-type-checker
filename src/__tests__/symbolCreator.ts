@@ -152,7 +152,7 @@ describe('symbolCreator', () => {
 
   describe('error', () => {
     it('let a = 1 + "str"; is error', () => {
-      const input = 'let a = 1 + "str"'
+      const input = 'let a = 1 + "str";'
 
       const actual = testError(input)
       const expected = [createLeftIsNotRight(PrimitiveType.Number, PrimitiveType.String)]
@@ -169,12 +169,12 @@ describe('symbolCreator', () => {
 
     it('no emit error when it declare correctly', () => {
       const input = `
-      let a = true
-      let b = "abc"
-      let c = null
-      let d = undefined
-      let e = 1
-      let f = Symbol('abc')
+      let a = true;
+      let b = "abc";
+      let c = null;
+      let d = undefined;
+      let e = 1;
+      let f = Symbol('abc');
       `
       const actual = testError(input)
       const expected = []
@@ -183,11 +183,11 @@ describe('symbolCreator', () => {
 
     it('no emit error when it calculates correctly', () => {
       const input = `
-      let a = 1 + 4
-      let b = 3 + 5 * 3
-      let c = 4 / 2 + 12
-      let d = (4 + 5) * (3 - 2)
-      let e = "abc" + "def"
+      let a = 1 + 4;
+      let b = 3 + 5 * 3;
+      let c = 4 / 2 + 12;
+      let d = (4 + 5) * (3 - 2);
+      let e = "abc" + "def";
       `
       const actual = testError(input)
       const expected = []

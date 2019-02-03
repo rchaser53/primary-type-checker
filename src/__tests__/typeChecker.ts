@@ -45,17 +45,27 @@ describe('typeChecker', () => {
       ]
       expect(actual).toEqual(expected)
     })
+
+    it('identify', () => {
+      const input = `
+        let a = 1;
+        let b = "abc" + a;
+      `
+      const actual = setup(input)
+      const expected = [createLeftIsNotRight(PrimitiveType.String, PrimitiveType.Number)]
+      expect(actual).toEqual(expected)
+    })
   })
 
   describe('normal', () => {
     it('no emit error when it declare correctly', () => {
       const input = `
-      let a = true
-      let b = "abc"
-      let c = null
-      let d = undefined
-      let e = 1
-      let f = Symbol('abc')
+      let a = true;
+      let b = "abc";
+      let c = null;
+      let d = undefined;
+      let e = 1;
+      let f = Symbol('abc');
       `
       const actual = setup(input)
       const expected = []
@@ -64,11 +74,21 @@ describe('typeChecker', () => {
 
     it('no emit error when it calculates correctly', () => {
       const input = `
-      let a = 1 + 4
-      let b = 3 + 5 * 3
-      let c = 4 / 2 + 12
-      let d = (4 + 5) * (3 - 2)
-      let e = "abc" + "def"
+      let a = 1 + 4;
+      let b = 3 + 5 * 3;
+      let c = 4 / 2 + 12;
+      let d = (4 + 5) * (3 - 2);
+      let e = "abc" + "def";
+      `
+      const actual = setup(input)
+      const expected = []
+      expect(actual).toEqual(expected)
+    })
+
+    it('identify', () => {
+      const input = `
+        let a = 1;
+        let b = 12 + a;
       `
       const actual = setup(input)
       const expected = []
