@@ -1,4 +1,4 @@
-import { PrimitiveType, resolvePrimitiveType } from './types'
+import { Identifier, PrimitiveType, resolvePrimitiveType } from './types'
 import { createLeftIsNotRight, createCannotBinaryOp, ErrorType } from './errors'
 import { Definiton, Unknown, Scope, Scopes, VariableType } from './scope'
 import { GlobalScopeId } from './constants'
@@ -52,19 +52,11 @@ export default class SymbolCreator {
     right.scopeId = this.currentScope.id
 
     const leftType = this.resolveBinaryOpNode(left)
-    if (left.type === NodeType.Identifier) {
-      throw new Unknown(this.currentScope.id, left.name)
-    }
-
     if (leftType !== PrimitiveType.Number && leftType !== PrimitiveType.String) {
       throw createCannotBinaryOp(left.type)
     }
 
     const rightType = this.resolveBinaryOpNode(right)
-    if (right.type === NodeType.Identifier) {
-      throw new Unknown(this.currentScope.id, right.name)
-    }
-
     if (leftType !== rightType && left.type !== NodeType.Identifier) {
       throw createLeftIsNotRight(left.type, right.type)
     }
@@ -72,7 +64,7 @@ export default class SymbolCreator {
     return leftType
   }
 
-  resolveBinaryOpNode(node): PrimitiveType {
+  resolveBinaryOpNode(node): PrimitiveType | Identifier {
     let nodeType = node.type
     switch (node.type) {
       case NodeType.BinaryExpression:
@@ -83,6 +75,11 @@ export default class SymbolCreator {
       default:
         break
     }
+
+    if (node.type === NodeType.Identifier) {
+      throw new Unknown(this.currentScope.id, node.name)
+    }
+
     return nodeType
   }
 

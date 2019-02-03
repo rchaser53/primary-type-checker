@@ -7,7 +7,7 @@ import { GlobalScopeId } from './constants'
 const DummyDefininition = {
   name: 'dummy',
   type: PrimitiveType.Undefined,
-  count: 0 
+  count: 0
 }
 
 export default class TypeChecker {
@@ -99,12 +99,8 @@ export default class TypeChecker {
         nodeType = this.resolveBinaryExpression(node.left, node.right)
         break
       case NodeType.Identifier:
-        // 普通にNodeType.Identifierが来るので直す
-        const resolved = this.resolveIdentifier(node.scopeId, node.name, 0) as any
+        const resolved = this.resolveIdentifier(node.scopeId, node.name, 0)
         nodeType = resolved.type
-        if (resolved.type === NodeType.Identifier) {
-          nodeType = this.resolveIdentifier(this.currentScope.id, resolved.name, 0).type
-        }
       default:
         break
     }
@@ -113,47 +109,46 @@ export default class TypeChecker {
 
   tryFindError(nodeId: number, nodeName: string, count: number): Definiton {
     const targetScope = this.findNameScope(nodeId)
-    let resolved = targetScope.defs.find((def) => {
+    const resolved = targetScope.defs.find((def) => {
       return def.name === nodeName && def.count === count
     })
 
     if (resolved === undefined) {
       if (targetScope.parentId == null) {
         return DummyDefininition
-      } else {
-        const resolved = this.tryFindError(targetScope.parentId, nodeName, 0)
-
-        return resolved.type instanceof Unknown ? this.tryFindError(targetScope.parentId, resolved.name, 0) : resolved!
       }
+      const resolved = this.tryFindError(targetScope.parentId, nodeName, 0)
+
+      return resolved.type instanceof Unknown ? this.tryFindError(targetScope.parentId, resolved.name, 0) : resolved
     }
 
-    return resolved!.type instanceof Unknown ? this.tryFindError(nodeId, resolved!.name, ++count)! : resolved!
+    return resolved!.type instanceof Unknown ? this.tryFindError(nodeId, resolved!.name, ++count) : resolved
   }
 
   resolveIdentifier(nodeId: number, nodeName: string, count: number): Definiton {
     const targetScope = this.findNameScope(nodeId)
-
-    let resolved = targetScope.defs.find((def) => {
+    const resolved = targetScope.defs.find((def) => {
       return def.name === nodeName && def.count === count
     })
 
     if (resolved === undefined) {
       if (targetScope.parentId == null) {
         throw createUnknownIdentifier(nodeName)
-      } else {
-        const resolved = this.resolveIdentifier(targetScope.parentId, nodeName, 0)
-
-        return resolved.type instanceof Unknown
-          ? this.resolveIdentifier(targetScope.parentId, resolved.name, 0)
-          : resolved!
       }
+
+      const resolved = this.resolveIdentifier(targetScope.parentId, nodeName, 0)
+      return resolved.type instanceof Unknown
+        ? this.resolveIdentifier(targetScope.parentId, resolved.name, 0)
+        : resolved
     }
 
-    const actualCount = nodeName !== (resolved.type as any).referencedName ? 0 : ++count
+    if (resolved.type instanceof Unknown) {
+      const referencedName = resolved.type.referencedName
+      const actualCount = nodeName !== referencedName ? 0 : ++count
+      return this.resolveIdentifier(nodeId, referencedName, actualCount)
+    }
 
-    return resolved!.type instanceof Unknown
-      ? this.resolveIdentifier(nodeId, (resolved.type as any).referencedName, actualCount)!
-      : resolved!
+    return resolved
   }
 
   findNameScope(nodeId: number): Scope {

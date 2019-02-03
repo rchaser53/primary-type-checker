@@ -32,3 +32,5 @@ export const resolvePrimitiveType = (value): PrimitiveType => {
   }
   return type
 }
+
+export type Identifier = 'Identifier'
