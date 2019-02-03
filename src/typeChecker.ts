@@ -33,9 +33,13 @@ export default class TypeChecker {
   }
 
   resolveVariableDeclaration(node) {
-    const { init } = node.declarations[0] // why Array?
-
     try {
+      const { id, init } = node.declarations[0] // why Array?
+
+      // console.log(
+      //   this.resolveIdentifier(id.scopeId, id.name)
+      // )
+
       switch (init.type) {
         case NodeType.BinaryExpression:
           this.resolveBinaryExpression(init.left, init.right)
@@ -100,7 +104,8 @@ export default class TypeChecker {
     }
 
     // 多分あれこれ判断する必要あり
-    return this.resolveBinaryOpNode(resolved)
+    // return this.resolveBinaryOpNode(resolved)
+    return resolved
   }
 
   findNameScope(nodeId: number): Scope {

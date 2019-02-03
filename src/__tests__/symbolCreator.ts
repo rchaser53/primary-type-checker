@@ -29,7 +29,7 @@ export const testNormal = (input: string) => {
 
 describe('symbolCreator', () => {
   describe('symbol tables', () => {
-    it('let a = true;"', () => {
+    it('let a = true;', () => {
       const input = `let a = true;`
 
       const actual = testNormal(input)
