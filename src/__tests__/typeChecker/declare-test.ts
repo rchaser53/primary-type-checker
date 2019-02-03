@@ -1,26 +1,8 @@
-const { parse } = require('@babel/parser')
-import SymbolCreator from '../symbolCreator'
-import TypeChecker from '../typeChecker'
-import { createCannotBinaryOp, createLeftIsNotRight, createUnknownIdentifier } from '../errors'
-import { PrimitiveType } from '../types'
+import { createCannotBinaryOp, createLeftIsNotRight, createUnknownIdentifier } from '../../errors'
+import { PrimitiveType } from '../../types'
+import { setup } from './helper'
 
-export const setup = (input: string) => {
-  const symbolCreator = new SymbolCreator()
-  const program = parse(input).program
-  program.body.forEach((node) => {
-    symbolCreator.walkNode(node)
-  })
-
-  const typeChecker = new TypeChecker(symbolCreator.scopes)
-
-  program.body.forEach((node) => {
-    typeChecker.walkNode(node)
-  })
-
-  return typeChecker.errorStacks
-}
-
-describe('typeChecker', () => {
+describe('typeChecker declare', () => {
   describe('error', () => {
     it('undeclared variable error', () => {
       const input = `

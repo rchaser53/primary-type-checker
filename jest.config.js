@@ -12,5 +12,5 @@ module.exports = {
     '^~/(.+)': '<rootDir>/src/$1'
   },
   testPathIgnorePatterns: ['<rootDir>/node_modules/', 'dest'],
-  testMatch: ['<rootDir>/src/**/__tests__/**/*.(ts|js)']
+  testMatch: ['<rootDir>/src/**/__tests__/**/*-test.(ts|js)']
 }

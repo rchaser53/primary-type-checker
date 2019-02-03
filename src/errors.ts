@@ -10,6 +10,10 @@ export const createUnknownIdentifier = (name: string): ErrorType => {
   return new ErrorType(3, `cannot find ${name}`)
 }
 
+export const createCannotAssignOtherType = (leftType: string, rightType: string): ErrorType => {
+  return new ErrorType(4, `cannot assign other type. left: ${leftType}, right: ${rightType}`)
+}
+
 export class ErrorType {
   code: number
   message: string

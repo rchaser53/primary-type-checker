@@ -1,14 +1,7 @@
 import { Identifier, PrimitiveType, resolvePrimitiveType } from './types'
 import { createLeftIsNotRight, createCannotBinaryOp, ErrorType } from './errors'
 import { Definiton, Unknown, Scope, Scopes, VariableType } from './scope'
-import { GlobalScopeId } from './constants'
-
-export enum NodeType {
-  VariableDeclaration = 'VariableDeclaration',
-  BlockStatement = 'BlockStatement',
-  BinaryExpression = 'BinaryExpression',
-  Identifier = 'Identifier'
-}
+import { GlobalScopeId, NodeType } from './constants'
 
 export default class SymbolCreator {
   currentScope: Scope
@@ -29,7 +22,8 @@ export default class SymbolCreator {
         this.resolveBlockStatement(node)
         break
       default:
-        console.log(node)
+      case NodeType.ExpressionStatement:
+        this.resolveExpressionStatement(node)
         break
     }
   }
@@ -121,5 +115,10 @@ export default class SymbolCreator {
     return defs.filter((def) => {
       return def.name === name
     }).length
+  }
+
+  resolveExpressionStatement({ expression }) {
+    expression.left.scopeId = this.currentScope.id
+    expression.right.scopeId = this.currentScope.id
   }
 }
