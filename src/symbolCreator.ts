@@ -93,7 +93,7 @@ export default class SymbolCreator {
         if (init.name === 'undefined') {
           type = PrimitiveType.Undefined
         } else {
-          type = { astId: this.currentScope.id }
+          type = new Unknown(this.currentScope.id, init.name)
         }
         init.scopeId = this.currentScope.id
         break

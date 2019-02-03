@@ -1,8 +1,13 @@
 import { PrimitiveType } from './types'
 import { ErrorType } from './errors'
 
-export type Unknown = {
+export class Unknown {
   astId: number
+  referencedName: string
+  constructor(astId: number, name: string) {
+    this.astId = astId
+    this.referencedName = name
+  }
 }
 export type VariableType = PrimitiveType | ErrorType | Unknown
 
