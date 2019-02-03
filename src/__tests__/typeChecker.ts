@@ -1,7 +1,7 @@
 const { parse } = require('@babel/parser')
 import SymbolCreator from '../symbolCreator'
 import TypeChecker from '../typeChecker'
-import { createCannotBinaryOp, createLeftIsNotRight, createUnknownIdentifier, ErrorType } from '../errors'
+import { createCannotBinaryOp, createLeftIsNotRight, createUnknownIdentifier } from '../errors'
 import { PrimitiveType } from '../types'
 
 export const setup = (input: string) => {
@@ -55,6 +55,33 @@ describe('typeChecker', () => {
       const expected = [createLeftIsNotRight(PrimitiveType.String, PrimitiveType.Number)]
       expect(actual).toEqual(expected)
     })
+
+    it('identify nest', () => {
+      const input = `
+        let a = true;
+        {
+          let b = a + "def"
+        }
+      `
+      const actual = setup(input)
+      const expected = [createCannotBinaryOp(PrimitiveType.Boolean)]
+      expect(actual).toEqual(expected)
+    })
+
+    it('not found because declare other nest', () => {
+      const input = `
+        let a = "abc";
+        {
+          let b = a + "def"
+        }
+        {
+          let c = a + b;
+        }
+      `
+      const actual = setup(input)
+      const expected = [createUnknownIdentifier('b')]
+      expect(actual).toEqual(expected)
+    })
   })
 
   describe('normal', () => {
@@ -89,6 +116,19 @@ describe('typeChecker', () => {
       const input = `
         let a = 1;
         let b = 12 + a;
+      `
+      const actual = setup(input)
+      const expected = []
+      expect(actual).toEqual(expected)
+    })
+
+    it('identify nest', () => {
+      const input = `
+        let a = 1;
+        {
+          let a = "abc"
+          let b = a + "def"
+        }
       `
       const actual = setup(input)
       const expected = []
