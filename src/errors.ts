@@ -1,25 +1,21 @@
-export const createLeftIsNotRight = (leftType, rightType): ErrorType => {
-  return {
-    code: 1,
-    message: `${leftType} cannot be calculate ${rightType}`
-  }
+export const createLeftIsNotRight = (leftType: string, rightType: string): ErrorType => {
+  return new ErrorType(1, `${leftType} cannot be calculate ${rightType}`)
 }
 
-export const createCannotBinaryOp = (leftType): ErrorType => {
-  return {
-    code: 2,
-    message: `${leftType} cannot be used binary operation`
-  }
+export const createCannotBinaryOp = (leftType: string): ErrorType => {
+  return new ErrorType(2, `${leftType} cannot be used binary operation`)
 }
 
 export const createUnknownIdentifier = (name: string): ErrorType => {
-  return {
-    code: 3,
-    message: `cannot find ${name}`
-  }
+  return new ErrorType(3, `cannot find ${name}`)
 }
 
-export type ErrorType = {
+export class ErrorType {
   code: number
   message: string
+
+  constructor(code: number, message: string) {
+    this.code = code
+    this.message = message
+  }
 }

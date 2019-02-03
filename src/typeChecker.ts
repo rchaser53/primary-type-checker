@@ -36,9 +36,10 @@ export default class TypeChecker {
     try {
       const { id, init } = node.declarations[0] // why Array?
 
-      // console.log(
-      //   this.resolveIdentifier(id.scopeId, id.name)
-      // )
+      const def = this.resolveIdentifier(id.scopeId, id.name)
+      if (def.type instanceof ErrorType) {
+        throw def.type
+      }
 
       switch (init.type) {
         case NodeType.BinaryExpression:
@@ -61,17 +62,9 @@ export default class TypeChecker {
   }
 
   resolveBinaryExpression(left, right): PrimitiveType {
-    const leftType = this.resolveBinaryOpNode(left)
-    if (leftType !== PrimitiveType.Number && leftType !== PrimitiveType.String) {
-      throw createCannotBinaryOp(leftType)
-    }
-
-    const rightType = this.resolveBinaryOpNode(right)
-    if (leftType !== rightType) {
-      throw createLeftIsNotRight(leftType, rightType)
-    }
-
-    return leftType
+    // just check error
+    this.resolveBinaryOpNode(left)
+    return this.resolveBinaryOpNode(right)
   }
 
   resolveBinaryOpNode(node): PrimitiveType {
@@ -88,7 +81,7 @@ export default class TypeChecker {
     return nodeType
   }
 
-  resolveIdentifier(nodeId: number, nodeName: string) {
+  resolveIdentifier(nodeId: number, nodeName: string): Definiton {
     const targetScope = this.findNameScope(nodeId)
 
     let resolved = targetScope.defs.find((def) => {
@@ -105,7 +98,7 @@ export default class TypeChecker {
 
     // 多分あれこれ判断する必要あり
     // return this.resolveBinaryOpNode(resolved)
-    return resolved
+    return resolved!
   }
 
   findNameScope(nodeId: number): Scope {

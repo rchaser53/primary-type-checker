@@ -77,7 +77,6 @@ export default class SymbolCreator {
 
   resolveVariableDeclaration(node) {
     const { id, init } = node.declarations[0] // why Array?
-    // node.scopeId = this.currentScope.id
     id.scopeId = this.currentScope.id
 
     let type: VariableType = PrimitiveType.Undefined
