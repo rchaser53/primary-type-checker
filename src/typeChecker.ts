@@ -17,7 +17,6 @@ export default class TypeChecker {
   }
 
   walkNode(node) {
-    console.log(node)
     switch (node.type) {
       case NodeType.VariableDeclaration:
         this.resolveVariableDeclaration(node)

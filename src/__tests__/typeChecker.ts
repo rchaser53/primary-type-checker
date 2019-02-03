@@ -34,11 +34,15 @@ export const testNormal = (input: string) => {
 
 describe('typeChecker', () => {
   describe('symbol tables', () => {
-    it('let a = b; is error', () => {
-      const input = `let a = b;`
+    it('undeclared variable error', () => {
+      const input = `
+        let a = b;
+        let a = 3 + c;
+        let a = d + e;
+      `
 
       const actual = testNormal(input)
-      const expected = [createUnknownIdentifier('b')]
+      const expected = [createUnknownIdentifier('b'), createUnknownIdentifier('c'), createUnknownIdentifier('d')]
       expect(actual).toEqual(expected)
     })
   })

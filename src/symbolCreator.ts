@@ -36,7 +36,6 @@ export default class SymbolCreator {
 
   resolveBlockStatement(node) {
     const scope = new Scope(this.idCounter++, this.currentScope.id)
-    // node.id = scope.id // think this more deeply
     const lastScope = this.currentScope
 
     this.currentScope = scope
@@ -49,33 +48,31 @@ export default class SymbolCreator {
   }
 
   resolveBinaryExpression(left, right): PrimitiveType {
-    let leftType = left.type
-    switch (left.type) {
-      case NodeType.BinaryExpression:
-        leftType = this.resolveBinaryExpression(left.left, left.right)
-        break
-      default:
-        break
-    }
-
-    if (leftType !== PrimitiveType.Number && leftType !== PrimitiveType.String) {
+    const leftType = this.resolveBinaryOpNode(left)
+    if (leftType !== PrimitiveType.Number && leftType !== PrimitiveType.String && left.type !== NodeType.Identifier) {
       throw createCannotBinaryOp(leftType)
     }
 
-    let rightType = right.type
-    switch (right.type) {
-      case NodeType.BinaryExpression:
-        rightType = this.resolveBinaryExpression(right.left, right.right)
-        break
-      default:
-        break
-    }
-
-    if (leftType !== rightType) {
+    const rightType = this.resolveBinaryOpNode(right)
+    if (leftType !== rightType && left.type !== NodeType.Identifier && right.type !== NodeType.Identifier) {
       throw createLeftIsNotRight(leftType, rightType)
     }
 
     return leftType
+  }
+
+  resolveBinaryOpNode(node): PrimitiveType {
+    let nodeType = node.type
+    switch (node.type) {
+      case NodeType.BinaryExpression:
+        nodeType = this.resolveBinaryExpression(node.left, node.right)
+        break
+      case NodeType.Identifier:
+        node.scopeId = this.currentScope.id
+      default:
+        break
+    }
+    return nodeType
   }
 
   resolveVariableDeclaration(node) {
