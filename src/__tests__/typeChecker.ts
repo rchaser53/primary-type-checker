@@ -56,31 +56,64 @@ describe('typeChecker', () => {
       expect(actual).toEqual(expected)
     })
 
-    it('identify nest', () => {
+    it('use identify twice', () => {
       const input = `
-        let a = true;
-        {
-          let b = a + "def"
-        }
+        let a = 1;
+        let b = a * 3;
+        let c = "abc" + b;
       `
       const actual = setup(input)
-      const expected = [createCannotBinaryOp(PrimitiveType.Boolean)]
+      const expected = [createLeftIsNotRight(PrimitiveType.String, PrimitiveType.Number)]
       expect(actual).toEqual(expected)
     })
 
-    it('not found because declare other nest', () => {
-      const input = `
-        let a = "abc";
-        {
-          let b = a + "def"
-        }
-        {
-          let c = a + b;
-        }
-      `
-      const actual = setup(input)
-      const expected = [createUnknownIdentifier('b')]
-      expect(actual).toEqual(expected)
+    describe('nest', () => {
+      it('identify nest', () => {
+        const input = `
+          let a = true;
+          {
+            let b = a + "def"
+          }
+        `
+        const actual = setup(input)
+        const expected = [createCannotBinaryOp(PrimitiveType.Boolean)]
+        expect(actual).toEqual(expected)
+      })
+
+      it('not found because declare other nest', () => {
+        const input = `
+          let a = "abc";
+          {
+            let b = a + "def"
+          }
+          {
+            let c = a + b;
+          }
+        `
+        const actual = setup(input)
+        const expected = [createUnknownIdentifier('b')]
+        expect(actual).toEqual(expected)
+      })
+
+      it('not found because declare other dobule nest ', () => {
+        const input = `
+          let a = "abc";
+          {
+            {
+              let b = a + "def";
+            }
+          }
+          {
+            {
+              let b = "def";
+            }
+            let c = a + b;
+          }
+        `
+        const actual = setup(input)
+        const expected = [createUnknownIdentifier('b')]
+        expect(actual).toEqual(expected)
+      })
     })
   })
 
@@ -129,6 +162,17 @@ describe('typeChecker', () => {
           let a = "abc"
           let b = a + "def"
         }
+      `
+      const actual = setup(input)
+      const expected = []
+      expect(actual).toEqual(expected)
+    })
+
+    it('use identify twice', () => {
+      const input = `
+        let a = 1;
+        let b = a * 3;
+        let c = 5 + b;
       `
       const actual = setup(input)
       const expected = []

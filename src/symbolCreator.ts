@@ -48,14 +48,25 @@ export default class SymbolCreator {
   }
 
   resolveBinaryExpression(left, right): PrimitiveType {
+    left.scopeId = this.currentScope.id
+    right.scopeId = this.currentScope.id
+
     const leftType = this.resolveBinaryOpNode(left)
-    if (leftType !== PrimitiveType.Number && leftType !== PrimitiveType.String && left.type !== NodeType.Identifier) {
-      throw createCannotBinaryOp(leftType)
+    if (left.type === NodeType.Identifier) {
+      throw new Unknown(this.currentScope.id, left.name)
+    }
+
+    if (leftType !== PrimitiveType.Number && leftType !== PrimitiveType.String) {
+      throw createCannotBinaryOp(left.type)
     }
 
     const rightType = this.resolveBinaryOpNode(right)
-    if (leftType !== rightType && left.type !== NodeType.Identifier && right.type !== NodeType.Identifier) {
-      throw createLeftIsNotRight(leftType, rightType)
+    if (right.type === NodeType.Identifier) {
+      throw new Unknown(this.currentScope.id, right.name)
+    }
+
+    if (leftType !== rightType && left.type !== NodeType.Identifier) {
+      throw createLeftIsNotRight(left.type, right.type)
     }
 
     return leftType

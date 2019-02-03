@@ -1,8 +1,14 @@
 import { PrimitiveType } from './types'
 import { createLeftIsNotRight, createCannotBinaryOp, createUnknownIdentifier, ErrorType } from './errors'
-import { Definiton, Scope, Scopes } from './scope'
+import { Definiton, Scope, Scopes, Unknown } from './scope'
 import { NodeType } from './symbolCreator'
 import { GlobalScopeId } from './constants'
+
+const DummyDefininition = {
+  name: 'dummy',
+  type: PrimitiveType.Undefined,
+  count: 0 
+}
 
 export default class TypeChecker {
   scopes: Scopes
@@ -46,7 +52,7 @@ export default class TypeChecker {
     try {
       const { id, init } = node.declarations[0] // why Array?
 
-      const def = this.resolveIdentifier(id.scopeId, id.name)
+      const def = this.tryFindError(id.scopeId, id.name, 0)
       if (def.type instanceof ErrorType) {
         throw def.type
       }
@@ -62,7 +68,7 @@ export default class TypeChecker {
           }
 
           // just type check
-          this.resolveIdentifier(init.scopeId, init.name)
+          this.resolveIdentifier(init.scopeId, init.name, 0)
           break
         default:
           break
@@ -93,29 +99,61 @@ export default class TypeChecker {
         nodeType = this.resolveBinaryExpression(node.left, node.right)
         break
       case NodeType.Identifier:
-        nodeType = this.resolveIdentifier(node.scopeId, node.name).type
+        // 普通にNodeType.Identifierが来るので直す
+        const resolved = this.resolveIdentifier(node.scopeId, node.name, 0) as any
+        nodeType = resolved.type
+        if (resolved.type === NodeType.Identifier) {
+          nodeType = this.resolveIdentifier(this.currentScope.id, resolved.name, 0).type
+        }
       default:
         break
     }
     return nodeType
   }
 
-  resolveIdentifier(nodeId: number, nodeName: string): Definiton {
+  tryFindError(nodeId: number, nodeName: string, count: number): Definiton {
+    const targetScope = this.findNameScope(nodeId)
+    let resolved = targetScope.defs.find((def) => {
+      return def.name === nodeName && def.count === count
+    })
+
+    if (resolved === undefined) {
+      if (targetScope.parentId == null) {
+        return DummyDefininition
+      } else {
+        const resolved = this.tryFindError(targetScope.parentId, nodeName, 0)
+
+        return resolved.type instanceof Unknown ? this.tryFindError(targetScope.parentId, resolved.name, 0) : resolved!
+      }
+    }
+
+    return resolved!.type instanceof Unknown ? this.tryFindError(nodeId, resolved!.name, ++count)! : resolved!
+  }
+
+  resolveIdentifier(nodeId: number, nodeName: string, count: number): Definiton {
     const targetScope = this.findNameScope(nodeId)
 
     let resolved = targetScope.defs.find((def) => {
-      return def.name === nodeName
+      return def.name === nodeName && def.count === count
     })
 
     if (resolved === undefined) {
       if (targetScope.parentId == null) {
         throw createUnknownIdentifier(nodeName)
       } else {
-        return this.resolveIdentifier(targetScope.parentId, nodeName)
+        const resolved = this.resolveIdentifier(targetScope.parentId, nodeName, 0)
+
+        return resolved.type instanceof Unknown
+          ? this.resolveIdentifier(targetScope.parentId, resolved.name, 0)
+          : resolved!
       }
     }
 
-    return resolved
+    const actualCount = nodeName !== (resolved.type as any).referencedName ? 0 : ++count
+
+    return resolved!.type instanceof Unknown
+      ? this.resolveIdentifier(nodeId, (resolved.type as any).referencedName, actualCount)!
+      : resolved!
   }
 
   findNameScope(nodeId: number): Scope {
@@ -125,7 +163,7 @@ export default class TypeChecker {
 
     if (targetScope === undefined) {
       console.error(nodeId, this.scopes)
-      throw new Error(`should not come here`)
+      throw new Error(`should not come in typeChecker's findNameScope`)
     }
 
     return targetScope

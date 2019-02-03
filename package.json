@@ -6,7 +6,7 @@
   "scripts": {
     "pretsc": "rm -rf dist",
     "tsc": "tsc -p .",
-    "build": "npm run tsc && node dist/index.js",
+    "build": "npm run tsc && node dist/index.js index.js",
     "prettier": "prettier  --write \"**/*.{js,ts,json}\"",
     "prettier-check": "prettier \"**/*.{js,ts,json}\" --check",
     "test": "jest test --no-cache"
