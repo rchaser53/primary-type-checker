@@ -7,13 +7,23 @@ import { GlobalScopeId } from './constants'
 export default class TypeChecker {
   scopes: Scopes
   currentScope: Scope
-  errorStacks: string[] = []
+  errorStacks: ErrorType[] = []
 
   constructor(scopes: Scopes) {
     this.scopes = scopes
     this.currentScope = scopes.find((scope) => {
       return scope.id === GlobalScopeId
     })!
+  }
+
+  emitError() {
+    if (this.errorStacks.length > 0) {
+      throw this.errorStacks
+        .map((error) => {
+          return error.message
+        })
+        .join('\n')
+    }
   }
 
   walkNode(node) {

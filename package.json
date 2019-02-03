@@ -24,10 +24,14 @@
   "homepage": "https://github.com/rchaser53/primary-type-checker#readme",
   "devDependencies": {
     "@babel/parser": "^7.3.1",
+    "@types/commander": "^2.12.2",
     "@types/jest": "^23.3.13",
     "@types/node": "^10.12.18",
     "jest": "^24.0.0",
     "prettier": "^1.16.0",
     "typescript": "^3.2.4"
+  },
+  "dependencies": {
+    "commander": "^2.19.0"
   }
 }
