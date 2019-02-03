@@ -1,6 +1,6 @@
-import { PrimitiveType, resolvePrimitiveType } from './types'
+import { PrimitiveType } from './types'
 import { createLeftIsNotRight, createCannotBinaryOp, createUnknownIdentifier, ErrorType } from './errors'
-import { Definiton, Unknown, Scope, Scopes, VariableType } from './scope'
+import { Definiton, Scope, Scopes } from './scope'
 import { NodeType } from './symbolCreator'
 import { GlobalScopeId } from './constants'
 
@@ -51,6 +51,7 @@ export default class TypeChecker {
             break
           }
 
+          // just type check
           this.resolveIdentifier(init.scopeId, init.name)
           break
         default:
@@ -82,14 +83,14 @@ export default class TypeChecker {
         nodeType = this.resolveBinaryExpression(node.left, node.right)
         break
       case NodeType.Identifier:
-        nodeType = this.resolveIdentifier(node.scopeId, node.name)
+        nodeType = this.resolveIdentifier(node.scopeId, node.name).type
       default:
         break
     }
     return nodeType
   }
 
-  resolveIdentifier(nodeId: number, nodeName: string): VariableType {
+  resolveIdentifier(nodeId: number, nodeName: string): Definiton {
     const targetScope = this.findNameScope(nodeId)
 
     let resolved = targetScope.defs.find((def) => {
@@ -104,9 +105,7 @@ export default class TypeChecker {
       }
     }
 
-    // 多分あれこれ判断する必要あり
-    // return this.resolveBinaryOpNode(resolved)
-    return resolved!.type
+    return resolved
   }
 
   findNameScope(nodeId: number): Scope {
