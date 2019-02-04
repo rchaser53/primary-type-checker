@@ -87,7 +87,7 @@ export default class TypeChecker {
   resolveAssignmentExpression({ left, right }) {
     try {
       const leftType = this.tryResolveLeftIdentifier(left)
-      
+
       let rightType
       if (right.type === NodeType.BinaryExpression) {
         rightType = this.resolveBinaryExpression(right.left, right.right)
@@ -232,13 +232,16 @@ export default class TypeChecker {
     return targetScope
   }
 
-  walkIfStatement({test}) {
+  walkIfStatement({ test }) {
     switch (test.type) {
       case PrimitiveType.Boolean:
-        break;
+        break
       case NodeType.Identifier:
-        throw new Error('no implements')
-        break;
+        const resolved = this.resolveRightIdentifier(test.scopeId, test.name, 0)
+        if (resolved.type !== PrimitiveType.Boolean) {
+          this.errorStacks.push(createIfCondtionIsNotBoolean(resolved.type as string))
+        }
+        break
       default:
         this.errorStacks.push(createIfCondtionIsNotBoolean(test.type))
     }
