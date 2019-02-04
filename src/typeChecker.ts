@@ -66,10 +66,30 @@ export default class TypeChecker {
     }
   }
 
+  resolveBinaryExpression(left, right): PrimitiveType {
+    const leftType = this.resolveBinaryOpNode(left)
+    if (leftType !== PrimitiveType.Number && leftType !== PrimitiveType.String) {
+      throw createCannotBinaryOp(leftType)
+    }
+
+    const rightType = this.resolveBinaryOpNode(right)
+    if (leftType !== rightType) {
+      throw createLeftIsNotRight(leftType, rightType)
+    }
+
+    return leftType
+  }
+
   resolveAssignmentExpression({ left, right }) {
     try {
       const leftType = this.tryResolveLeftIdentifier(left)
-      const rightType = this.tryResolveRightNode(right)
+      
+      let rightType
+      if (right.type === NodeType.BinaryExpression) {
+        rightType = this.resolveBinaryExpression(right.left, right.right)
+      } else {
+        rightType = this.tryResolveRightNode(right)
+      }
 
       if (leftType !== rightType) {
         throw createCannotAssignOtherType(leftType, rightType)
@@ -131,20 +151,6 @@ export default class TypeChecker {
     } catch (err) {
       this.errorStacks.push(err)
     }
-  }
-
-  resolveBinaryExpression(left, right): PrimitiveType {
-    const leftType = this.resolveBinaryOpNode(left)
-    if (leftType !== PrimitiveType.Number && leftType !== PrimitiveType.String) {
-      throw createCannotBinaryOp(leftType)
-    }
-
-    const rightType = this.resolveBinaryOpNode(right)
-    if (leftType !== rightType) {
-      throw createLeftIsNotRight(leftType, rightType)
-    }
-
-    return leftType
   }
 
   resolveBinaryOpNode(node): PrimitiveType {

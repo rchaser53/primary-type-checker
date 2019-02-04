@@ -119,6 +119,12 @@ export default class SymbolCreator {
 
   resolveExpressionStatement({ expression }) {
     expression.left.scopeId = this.currentScope.id
-    expression.right.scopeId = this.currentScope.id
+
+    if (expression.right.type === NodeType.BinaryExpression) {
+      expression.right.left.scopeId = this.currentScope.id
+      expression.right.right.scopeId = this.currentScope.id
+    } else {
+      expression.right.scopeId = this.currentScope.id
+    }
   }
 }

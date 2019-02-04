@@ -1,16 +1,27 @@
-import { createCannotAssignOtherType } from '../../errors'
+import { createCannotAssignOtherType, createLeftIsNotRight } from '../../errors'
 import { PrimitiveType } from '../../types'
 import { setup } from './helper'
 
 describe('typeChecker assign', () => {
   describe('error', () => {
-    it('undeclared variable error', () => {
+    it('type difference error', () => {
       const input = `
         let a = 3;
         a = "d";
       `
       const actual = setup(input)
       const expected = [createCannotAssignOtherType(PrimitiveType.Number, PrimitiveType.String)]
+      expect(actual).toEqual(expected)
+    })
+
+    it('use identify error', () => {
+      const input = `
+        let a = 3;
+        let b = a;
+        a = b + "aaa";
+      `
+      const actual = setup(input)
+      const expected = [createLeftIsNotRight(PrimitiveType.Number, PrimitiveType.String)]
       expect(actual).toEqual(expected)
     })
   })
