@@ -232,7 +232,10 @@ export default class TypeChecker {
     return targetScope
   }
 
-  walkIfStatement({ test }) {
+  walkIfStatement({ test, alternate }) {
+    // for else only
+    if (test == null) return
+
     switch (test.type) {
       case PrimitiveType.Boolean:
         break
@@ -244,6 +247,10 @@ export default class TypeChecker {
         break
       default:
         this.errorStacks.push(createIfCondtionIsNotBoolean(test.type))
+    }
+
+    if (alternate != null) {
+      this.walkIfStatement(alternate)
     }
   }
 }

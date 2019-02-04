@@ -21,9 +21,12 @@ export default class SymbolCreator {
       case NodeType.BlockStatement:
         this.resolveBlockStatement(node)
         break
-      default:
       case NodeType.ExpressionStatement:
         this.resolveExpressionStatement(node)
+        break
+      case NodeType.IfStatement:
+        this.resolveIfStatement(node)
+      default:
         break
     }
   }
@@ -117,17 +120,7 @@ export default class SymbolCreator {
     }).length
   }
 
-  resolveExpressionStatement(node) {
-    if (node.expression != null) {
-      this.resolveExpression(node)
-    }
-
-    if (node.test != null) {
-      this.resolveTest(node.test)
-    }
-  }
-
-  resolveExpression({ expression }) {
+  resolveExpressionStatement({ expression }) {
     const { left, right } = expression
     if (left != null) {
       left.scopeId = this.currentScope.id
@@ -143,7 +136,13 @@ export default class SymbolCreator {
     }
   }
 
-  resolveTest(test) {
+  resolveIfStatement({ test, alternate }) {
+    // for else only
+    if (test == null) return
+
     test.scopeId = this.currentScope.id
+    if (alternate != null) {
+      this.resolveIfStatement(alternate)
+    }
   }
 }
