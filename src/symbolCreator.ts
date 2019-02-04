@@ -118,13 +118,18 @@ export default class SymbolCreator {
   }
 
   resolveExpressionStatement({ expression }) {
-    expression.left.scopeId = this.currentScope.id
-
-    if (expression.right.type === NodeType.BinaryExpression) {
-      expression.right.left.scopeId = this.currentScope.id
-      expression.right.right.scopeId = this.currentScope.id
-    } else {
-      expression.right.scopeId = this.currentScope.id
+    const { left, right } = expression
+    if (left != null) {
+      left.scopeId = this.currentScope.id
+    } 
+    
+    if (right != null) {
+      if (right.type === NodeType.BinaryExpression) {
+        right.left.scopeId = this.currentScope.id
+        right.right.scopeId = this.currentScope.id
+      } else {
+        right.scopeId = this.currentScope.id
+      }
     }
   }
 }
