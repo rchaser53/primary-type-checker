@@ -2,7 +2,7 @@ import { createCannotAssignOtherType, createLeftIsNotRight } from '../../errors'
 import { PrimitiveType } from '../../types'
 import { setup } from './helper'
 
-describe('typeChecker assign', () => {
+describe('typeChecker expression', () => {
   describe('normal', () => {
     it('no emit error when it uses', () => {
       const input = `

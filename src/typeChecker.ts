@@ -1,8 +1,9 @@
 import { PrimitiveType } from './types'
 import {
-  createLeftIsNotRight,
   createCannotBinaryOp,
   createCannotAssignOtherType,
+  createIfCondtionIsNotBoolean,
+  createLeftIsNotRight,
   createUnknownIdentifier,
   ErrorType
 } from './errors'
@@ -49,6 +50,9 @@ export default class TypeChecker {
         break
       case NodeType.ExpressionStatement:
         this.walkExpressionStatement(node)
+        break
+      case NodeType.IfStatement:
+        this.walkIfStatement(node)
         break
       default:
         console.log(node)
@@ -226,5 +230,17 @@ export default class TypeChecker {
     }
 
     return targetScope
+  }
+
+  walkIfStatement({test}) {
+    switch (test.type) {
+      case PrimitiveType.Boolean:
+        break;
+      case NodeType.Identifier:
+        throw new Error('no implements')
+        break;
+      default:
+        this.errorStacks.push(createIfCondtionIsNotBoolean(test.type))
+    }
   }
 }

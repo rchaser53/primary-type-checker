@@ -14,6 +14,10 @@ export const createCannotAssignOtherType = (leftType: string, rightType: string)
   return new ErrorType(4, `cannot assign other type. left: ${leftType}, right: ${rightType}`)
 }
 
+export const createIfCondtionIsNotBoolean = (type: string): ErrorType => {
+  return new ErrorType(5, `if condition should be Boolean. current: ${type}`)
+}
+
 export class ErrorType {
   code: number
   message: string

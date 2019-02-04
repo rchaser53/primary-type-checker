@@ -117,7 +117,17 @@ export default class SymbolCreator {
     }).length
   }
 
-  resolveExpressionStatement({ expression }) {
+  resolveExpressionStatement(node) {
+    if (node.expression != null) {
+      this.resolveExpression(node)
+    }
+
+    if (node.test != null) {
+      this.resolveTest(node.test)
+    }
+  }
+
+  resolveExpression({expression}) {
     const { left, right } = expression
     if (left != null) {
       left.scopeId = this.currentScope.id
@@ -131,5 +141,9 @@ export default class SymbolCreator {
         right.scopeId = this.currentScope.id
       }
     }
+  }
+
+  resolveTest(test) {
+    test.scopeId = this.currentScope.id
   }
 }
