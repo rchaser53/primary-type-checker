@@ -24,6 +24,20 @@ describe('typeChecker assign', () => {
       const expected = [createLeftIsNotRight(PrimitiveType.Number, PrimitiveType.String)]
       expect(actual).toEqual(expected)
     })
+
+    it('use identify for delaration twice', () => {
+      const input = `
+        let a = 3
+        let b = a
+        let c = b
+        b = 5
+        c = 12
+        c = true
+      `
+      const actual = setup(input)
+      const expected = [createCannotAssignOtherType(PrimitiveType.Number, PrimitiveType.Boolean)]
+      expect(actual).toEqual(expected)
+    })
   })
 
   describe('normal', () => {

@@ -228,7 +228,11 @@ export default class TypeChecker {
         : resolved
     }
 
-    return resolved!.type instanceof Unknown ? this.resolveLeftIdentifier(nodeId, resolved!.name, ++count) : resolved
+    const resolvedType = resolved!.type
+    if (resolvedType instanceof Unknown) {
+      return this.resolveLeftIdentifier(nodeId, resolvedType.referencedName, count)
+    }
+    return resolved
   }
 
   resolveRightIdentifier(nodeId: number, nodeName: string, count: number): Definiton {

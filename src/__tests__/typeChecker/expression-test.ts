@@ -10,9 +10,7 @@ describe('typeChecker expression', () => {
       a = 'str';
       `
       const actual = setup(input)
-      const expected = [
-        createCannotAssignOtherType(PrimitiveType.Boolean, PrimitiveType.String)
-      ]
+      const expected = [createCannotAssignOtherType(PrimitiveType.Boolean, PrimitiveType.String)]
       expect(actual).toEqual(expected)
     })
   })
