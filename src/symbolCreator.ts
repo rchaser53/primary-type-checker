@@ -15,23 +15,24 @@ export default class SymbolCreator {
 
   walkNode(node) {
     switch (node.type) {
-      case NodeType.VariableDeclaration:
-        this.resolveVariableDeclaration(node)
-        break
       case NodeType.BlockStatement:
-        this.resolveBlockStatement(node)
+        this.walkBlockStatement(node)
         break
       case NodeType.ExpressionStatement:
         this.resolveExpressionStatement(node)
         break
       case NodeType.IfStatement:
-        this.resolveIfStatement(node)
+        this.walkIfStatement(node)
+        break
+      case NodeType.VariableDeclaration:
+        this.resolveVariableDeclaration(node)
+        break
       default:
         break
     }
   }
 
-  resolveBlockStatement(node) {
+  walkBlockStatement(node) {
     const scope = new Scope(this.idCounter++, this.currentScope.id)
     const lastScope = this.currentScope
 
@@ -136,13 +137,22 @@ export default class SymbolCreator {
     }
   }
 
-  resolveIfStatement({ test, alternate }) {
-    // for else only
-    if (test == null) return
+  walkIfStatement(node) {
+    const { test, consequent, alternate } = node
+
+    // else case
+    if (test == null) {
+      this.walkBlockStatement(node)
+      return
+    }
+    // others
+    else {
+      this.walkBlockStatement(consequent)
+    }
 
     test.scopeId = this.currentScope.id
     if (alternate != null) {
-      this.resolveIfStatement(alternate)
+      this.walkIfStatement(alternate)
     }
   }
 }

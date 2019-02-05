@@ -40,19 +40,17 @@ export default class TypeChecker {
 
   walkNode(node) {
     switch (node.type) {
-      case NodeType.VariableDeclaration:
-        this.resolveVariableDeclaration(node)
-        break
       case NodeType.BlockStatement:
-        node.body.forEach((innerNode) => {
-          this.walkNode(innerNode)
-        })
-        break
-      case NodeType.ExpressionStatement:
-        this.walkExpressionStatement(node)
+        this.walkBlockStatement(node)
         break
       case NodeType.IfStatement:
         this.walkIfStatement(node)
+        break
+      case NodeType.ExpressionStatement:
+        this.resolveExpressionStatement(node)
+        break
+      case NodeType.VariableDeclaration:
+        this.resolveVariableDeclaration(node)
         break
       default:
         console.log(node)
@@ -60,7 +58,44 @@ export default class TypeChecker {
     }
   }
 
-  walkExpressionStatement({ expression }) {
+  walkBlockStatement(node) {
+    node.body.forEach((innerNode) => {
+      this.walkNode(innerNode)
+    })
+  }
+
+  walkIfStatement(node) {
+    const { test, consequent, alternate } = node
+
+    // for else only
+    if (test == null) {
+      this.walkBlockStatement(node)
+      return
+    }
+    // others
+    else {
+      this.walkBlockStatement(consequent)
+    }
+
+    switch (test.type) {
+      case PrimitiveType.Boolean:
+        break
+      case NodeType.Identifier:
+        const resolved = this.resolveRightIdentifier(test.scopeId, test.name, 0)
+        if (resolved.type !== PrimitiveType.Boolean) {
+          this.errorStacks.push(createIfCondtionIsNotBoolean(resolved.type as string))
+        }
+        break
+      default:
+        this.errorStacks.push(createIfCondtionIsNotBoolean(test.type))
+    }
+
+    if (alternate != null) {
+      this.walkIfStatement(alternate)
+    }
+  }
+
+  resolveExpressionStatement({ expression }) {
     switch (expression.type) {
       case NodeType.AssignmentExpression:
         this.resolveAssignmentExpression(expression)
@@ -230,27 +265,5 @@ export default class TypeChecker {
     }
 
     return targetScope
-  }
-
-  walkIfStatement({ test, alternate }) {
-    // for else only
-    if (test == null) return
-
-    switch (test.type) {
-      case PrimitiveType.Boolean:
-        break
-      case NodeType.Identifier:
-        const resolved = this.resolveRightIdentifier(test.scopeId, test.name, 0)
-        if (resolved.type !== PrimitiveType.Boolean) {
-          this.errorStacks.push(createIfCondtionIsNotBoolean(resolved.type as string))
-        }
-        break
-      default:
-        this.errorStacks.push(createIfCondtionIsNotBoolean(test.type))
-    }
-
-    if (alternate != null) {
-      this.walkIfStatement(alternate)
-    }
   }
 }
