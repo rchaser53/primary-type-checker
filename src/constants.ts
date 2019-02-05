@@ -8,5 +8,6 @@ export enum NodeType {
   ForStatement = 'ForStatement',
   Identifier = 'Identifier',
   IfStatement = 'IfStatement',
+  UnaryExpression = 'UnaryExpression',
   VariableDeclaration = 'VariableDeclaration'
 }

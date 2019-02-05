@@ -73,6 +73,9 @@ export default class SymbolCreator {
         break
       case NodeType.Identifier:
         node.scopeId = this.currentScope.id
+      case NodeType.UnaryExpression:
+        nodeType = PrimitiveType.Boolean
+        break
       default:
         break
     }
@@ -105,6 +108,9 @@ export default class SymbolCreator {
           type = new Unknown(this.currentScope.id, init.name)
         }
         init.scopeId = this.currentScope.id
+        break
+      case NodeType.UnaryExpression:
+        type = PrimitiveType.Boolean
         break
       default:
         type = resolvePrimitiveType(init.value)
