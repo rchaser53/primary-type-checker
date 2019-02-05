@@ -1,10 +1,10 @@
-import { createIfCondtionIsNotBoolean } from '../../errors'
+import { createIfCondtionIsNotBoolean, createCannotAssignOtherType } from '../../errors'
 import { PrimitiveType } from '../../types'
 import { setup } from './helper'
 
 describe('typeChecker ifStatement', () => {
   describe('error', () => {
-    it('primary error', () => {
+    it('if test primary error', () => {
       const input = `
       if ('a') {}
       if (1) {}
@@ -17,7 +17,7 @@ describe('typeChecker ifStatement', () => {
       expect(actual).toEqual(expected)
     })
 
-    it('use identifier', () => {
+    it('if test using identifier', () => {
       const input = `
       let a = 3;
       let b = 'bbb';
@@ -32,7 +32,19 @@ describe('typeChecker ifStatement', () => {
       expect(actual).toEqual(expected)
     })
 
-    it('else if', () => {
+    it('if block error', () => {
+      const input = `
+      let a = 3;
+      if (true) {
+        a = 'str';
+      }
+      `
+      const actual = setup(input)
+      const expected = [createCannotAssignOtherType(PrimitiveType.Number, PrimitiveType.String)]
+      expect(actual).toEqual(expected)
+    })
+
+    it('else if test', () => {
       const input = `
       let a = 1;
       let b = false;
@@ -51,6 +63,25 @@ describe('typeChecker ifStatement', () => {
       ]
       expect(actual).toEqual(expected)
     })
+
+    it('else if and else block error', () => {
+      const input = `
+      let a = 3;
+      if (true) {
+        a = 15;
+      } else if (false) {
+        a = true;
+      } else {
+        a = 'str'
+      }
+      `
+      const actual = setup(input)
+      const expected = [
+        createCannotAssignOtherType(PrimitiveType.Number, PrimitiveType.Boolean),
+        createCannotAssignOtherType(PrimitiveType.Number, PrimitiveType.String)
+      ]
+      expect(actual).toEqual(expected)
+    })
   })
 
   describe('normal', () => {
@@ -63,6 +94,7 @@ describe('typeChecker ifStatement', () => {
       const expected = []
       expect(actual).toEqual(expected)
     })
+
     it('use identifier', () => {
       const input = `
       let a = true;
@@ -74,6 +106,7 @@ describe('typeChecker ifStatement', () => {
       const expected = []
       expect(actual).toEqual(expected)
     })
+
     it('else if', () => {
       const input = `
       let a = true;
@@ -83,6 +116,22 @@ describe('typeChecker ifStatement', () => {
       else {}
       if (a) {}
       else if (b) {}
+      `
+      const actual = setup(input)
+      const expected = []
+      expect(actual).toEqual(expected)
+    })
+
+    it('if, else if and else block', () => {
+      const input = `
+      let a = 3;
+      if (true) {
+        a = 15;
+      } else if (false) {
+        a = 25;
+      } else {
+        a = 35
+      }
       `
       const actual = setup(input)
       const expected = []
