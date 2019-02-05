@@ -46,6 +46,9 @@ export default class TypeChecker {
       case NodeType.IfStatement:
         this.walkIfStatement(node)
         break
+      case NodeType.ForStatement:
+        this.walkNode(node.body)
+        break
       case NodeType.ExpressionStatement:
         this.resolveExpressionStatement(node)
         break

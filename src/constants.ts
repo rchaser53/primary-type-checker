@@ -5,6 +5,7 @@ export enum NodeType {
   BlockStatement = 'BlockStatement',
   BinaryExpression = 'BinaryExpression',
   ExpressionStatement = 'ExpressionStatement',
+  ForStatement = 'ForStatement',
   Identifier = 'Identifier',
   IfStatement = 'IfStatement',
   VariableDeclaration = 'VariableDeclaration'

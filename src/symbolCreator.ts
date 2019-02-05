@@ -24,6 +24,9 @@ export default class SymbolCreator {
       case NodeType.IfStatement:
         this.walkIfStatement(node)
         break
+      case NodeType.ForStatement:
+        this.walkNode(node.body)
+        break
       case NodeType.VariableDeclaration:
         this.resolveVariableDeclaration(node)
         break
