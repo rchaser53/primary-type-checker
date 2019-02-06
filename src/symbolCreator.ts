@@ -18,14 +18,17 @@ export default class SymbolCreator {
       case NodeType.BlockStatement:
         this.walkBlockStatement(node)
         break
-      case NodeType.ExpressionStatement:
-        this.resolveExpressionStatement(node)
-        break
       case NodeType.IfStatement:
         this.walkIfStatement(node)
         break
+      case NodeType.WhileStatement:
+        this.walkWhileStatement(node)
+        break
       case NodeType.ForStatement:
         this.walkNode(node.body)
+        break
+      case NodeType.ExpressionStatement:
+        this.resolveExpressionStatement(node)
         break
       case NodeType.VariableDeclaration:
         this.resolveVariableDeclaration(node)
@@ -46,6 +49,30 @@ export default class SymbolCreator {
     this.currentScope = lastScope
 
     this.scopes.push(scope)
+  }
+
+  walkIfStatement(node) {
+    const { test, consequent, alternate } = node
+
+    // else case
+    if (test == null) {
+      this.walkBlockStatement(node)
+      return
+    }
+    // others
+    else {
+      this.walkBlockStatement(consequent)
+    }
+
+    test.scopeId = this.currentScope.id
+    if (alternate != null) {
+      this.walkIfStatement(alternate)
+    }
+  }
+
+  walkWhileStatement({ body, test }) {
+    this.walkNode(body)
+    test.scopeId = this.currentScope.id
   }
 
   resolveBinaryExpression(left, right): PrimitiveType {
@@ -143,25 +170,6 @@ export default class SymbolCreator {
       } else {
         right.scopeId = this.currentScope.id
       }
-    }
-  }
-
-  walkIfStatement(node) {
-    const { test, consequent, alternate } = node
-
-    // else case
-    if (test == null) {
-      this.walkBlockStatement(node)
-      return
-    }
-    // others
-    else {
-      this.walkBlockStatement(consequent)
-    }
-
-    test.scopeId = this.currentScope.id
-    if (alternate != null) {
-      this.walkIfStatement(alternate)
     }
   }
 }

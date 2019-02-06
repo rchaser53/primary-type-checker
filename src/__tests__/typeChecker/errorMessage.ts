@@ -27,7 +27,7 @@ describe('typeChecker expression', () => {
 
       const expected = [
         createCannotAssignOtherType(PrimitiveType.Boolean, PrimitiveType.String, firstLoc).createMessage(),
-        createIfCondtionIsNotBoolean(PrimitiveType.Number, secondLoc).createMessage(),
+        createIfCondtionIsNotBoolean(PrimitiveType.Number, secondLoc).createMessage()
       ]
       expect(actual).toEqual(expected)
     })

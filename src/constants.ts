@@ -9,5 +9,6 @@ export enum NodeType {
   Identifier = 'Identifier',
   IfStatement = 'IfStatement',
   UnaryExpression = 'UnaryExpression',
-  VariableDeclaration = 'VariableDeclaration'
+  VariableDeclaration = 'VariableDeclaration',
+  WhileStatement = 'WhileStatement'
 }

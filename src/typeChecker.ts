@@ -47,6 +47,9 @@ export default class TypeChecker {
       case NodeType.IfStatement:
         this.walkIfStatement(node)
         break
+      case NodeType.WhileStatement:
+        this.walkWhileStatement(node)
+        break
       case NodeType.ForStatement:
         this.walkNode(node.body)
         break
@@ -100,6 +103,19 @@ export default class TypeChecker {
     if (alternate != null) {
       this.walkIfStatement(alternate)
     }
+  }
+
+  walkWhileStatement(node) {
+    const { body, test } = node
+    this.loc = node.loc
+    console.log(test)
+    const testType =
+      test.type === NodeType.Identifier ? this.resolveRightIdentifier(test.scopeId, test.name, 0).type : test.type
+    if (testType !== PrimitiveType.Boolean) {
+      this.errorStacks.push(createIfCondtionIsNotBoolean(test.type as string, this.loc))
+    }
+
+    this.walkNode(body)
   }
 
   resolveExpressionStatement({ expression }) {
