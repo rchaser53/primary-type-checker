@@ -33,7 +33,7 @@ export default class TypeChecker {
     if (this.errorStacks.length > 0) {
       throw this.errorStacks
         .map((error) => {
-          return error.message
+          return error.createMessage()
         })
         .join('\n')
     }
