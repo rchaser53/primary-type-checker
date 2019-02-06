@@ -17,3 +17,16 @@ export const setup = (input: string) => {
 
   return typeChecker.errorStacks
 }
+
+export const createExpectedErrorMessage = (errObjs) => {
+  return errObjs.map(({ code, message }) => {
+    return {
+      code,
+      message
+    }
+  })
+}
+
+export const errorAssert = (actual, expected) => {
+  expect(createExpectedErrorMessage(actual)).toEqual(createExpectedErrorMessage(expected))
+}

@@ -1,6 +1,6 @@
 import { createCannotAssignOtherType, createLeftIsNotRight } from '../../errors'
 import { PrimitiveType } from '../../types'
-import { setup } from './helper'
+import { errorAssert, setup } from './helper'
 
 describe('typeChecker expression', () => {
   describe('error', () => {
@@ -11,7 +11,7 @@ describe('typeChecker expression', () => {
       `
       const actual = setup(input)
       const expected = [createCannotAssignOtherType(PrimitiveType.Boolean, PrimitiveType.String)]
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
   })
 
@@ -25,7 +25,7 @@ describe('typeChecker expression', () => {
       `
       const actual = setup(input)
       const expected = []
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
   })
 })

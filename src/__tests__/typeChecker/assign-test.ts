@@ -1,6 +1,6 @@
 import { createCannotAssignOtherType, createLeftIsNotRight } from '../../errors'
 import { PrimitiveType } from '../../types'
-import { setup } from './helper'
+import { errorAssert, setup } from './helper'
 
 describe('typeChecker assign', () => {
   describe('error', () => {
@@ -11,7 +11,7 @@ describe('typeChecker assign', () => {
       `
       const actual = setup(input)
       const expected = [createCannotAssignOtherType(PrimitiveType.Number, PrimitiveType.String)]
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
 
     it('use identify error', () => {
@@ -22,7 +22,7 @@ describe('typeChecker assign', () => {
       `
       const actual = setup(input)
       const expected = [createLeftIsNotRight(PrimitiveType.Number, PrimitiveType.String)]
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
 
     it('use identify for delaration twice', () => {
@@ -36,7 +36,7 @@ describe('typeChecker assign', () => {
       `
       const actual = setup(input)
       const expected = [createCannotAssignOtherType(PrimitiveType.Number, PrimitiveType.Boolean)]
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
   })
 
@@ -52,7 +52,7 @@ describe('typeChecker assign', () => {
       `
       const actual = setup(input)
       const expected = []
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
   })
 })

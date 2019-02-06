@@ -20,6 +20,7 @@ export default class TypeChecker {
   scopes: Scopes
   currentScope: Scope
   errorStacks: ErrorType[] = []
+  loc
 
   constructor(scopes: Scopes) {
     this.scopes = scopes
@@ -50,9 +51,11 @@ export default class TypeChecker {
         this.walkNode(node.body)
         break
       case NodeType.ExpressionStatement:
+        this.loc = node.loc
         this.resolveExpressionStatement(node)
         break
       case NodeType.VariableDeclaration:
+        this.loc = node.loc
         this.resolveVariableDeclaration(node)
         break
       default:
@@ -80,17 +83,18 @@ export default class TypeChecker {
       this.walkBlockStatement(consequent)
     }
 
+    this.loc = node.loc
     switch (test.type) {
       case PrimitiveType.Boolean:
         break
       case NodeType.Identifier:
         const resolved = this.resolveRightIdentifier(test.scopeId, test.name, 0)
         if (resolved.type !== PrimitiveType.Boolean) {
-          this.errorStacks.push(createIfCondtionIsNotBoolean(resolved.type as string))
+          this.errorStacks.push(createIfCondtionIsNotBoolean(resolved.type as string, this.loc))
         }
         break
       default:
-        this.errorStacks.push(createIfCondtionIsNotBoolean(test.type))
+        this.errorStacks.push(createIfCondtionIsNotBoolean(test.type, this.loc))
     }
 
     if (alternate != null) {
@@ -111,12 +115,12 @@ export default class TypeChecker {
   resolveBinaryExpression(left, right): PrimitiveType {
     const leftType = this.resolveBinaryOpNode(left)
     if (leftType !== PrimitiveType.Number && leftType !== PrimitiveType.String) {
-      throw createCannotBinaryOp(leftType)
+      throw createCannotBinaryOp(leftType, this.loc)
     }
 
     const rightType = this.resolveBinaryOpNode(right)
     if (leftType !== rightType) {
-      throw createLeftIsNotRight(leftType, rightType)
+      throw createLeftIsNotRight(leftType, rightType, this.loc)
     }
 
     return leftType
@@ -134,7 +138,7 @@ export default class TypeChecker {
       }
 
       if (leftType !== rightType) {
-        throw createCannotAssignOtherType(leftType, rightType)
+        throw createCannotAssignOtherType(leftType, rightType, this.loc)
       }
     } catch (err) {
       this.errorStacks.push(err)
@@ -204,6 +208,7 @@ export default class TypeChecker {
       case NodeType.Identifier:
         const resolved = this.resolveRightIdentifier(node.scopeId, node.name, 0)
         nodeType = resolved.type
+        break
       default:
         break
     }
@@ -243,7 +248,7 @@ export default class TypeChecker {
 
     if (resolved === undefined) {
       if (targetScope.parentId == null) {
-        throw createUnknownIdentifier(nodeName)
+        throw createUnknownIdentifier(nodeName, this.loc)
       }
 
       const resolved = this.resolveRightIdentifier(targetScope.parentId, nodeName, 0)

@@ -1,6 +1,6 @@
 import { createCannotBinaryOp, createLeftIsNotRight, createUnknownIdentifier } from '../../errors'
 import { PrimitiveType } from '../../types'
-import { setup } from './helper'
+import { errorAssert, setup } from './helper'
 
 describe('typeChecker declare', () => {
   describe('error', () => {
@@ -12,7 +12,7 @@ describe('typeChecker declare', () => {
       `
       const actual = setup(input)
       const expected = [createUnknownIdentifier('b'), createUnknownIdentifier('c'), createUnknownIdentifier('d')]
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
 
     it('let a = true + 1;', () => {
@@ -25,7 +25,7 @@ describe('typeChecker declare', () => {
         createCannotBinaryOp(PrimitiveType.Boolean),
         createLeftIsNotRight(PrimitiveType.String, PrimitiveType.Number)
       ]
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
 
     it('identify', () => {
@@ -35,7 +35,7 @@ describe('typeChecker declare', () => {
       `
       const actual = setup(input)
       const expected = [createLeftIsNotRight(PrimitiveType.String, PrimitiveType.Number)]
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
 
     it('use identify twice', () => {
@@ -46,7 +46,7 @@ describe('typeChecker declare', () => {
       `
       const actual = setup(input)
       const expected = [createLeftIsNotRight(PrimitiveType.String, PrimitiveType.Number)]
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
 
     describe('nest', () => {
@@ -59,7 +59,7 @@ describe('typeChecker declare', () => {
         `
         const actual = setup(input)
         const expected = [createCannotBinaryOp(PrimitiveType.Boolean)]
-        expect(actual).toEqual(expected)
+        errorAssert(actual, expected)
       })
 
       it('not found because declare other nest', () => {
@@ -74,7 +74,7 @@ describe('typeChecker declare', () => {
         `
         const actual = setup(input)
         const expected = [createUnknownIdentifier('b')]
-        expect(actual).toEqual(expected)
+        errorAssert(actual, expected)
       })
 
       it('not found because declare other dobule nest ', () => {
@@ -94,7 +94,7 @@ describe('typeChecker declare', () => {
         `
         const actual = setup(input)
         const expected = [createUnknownIdentifier('b')]
-        expect(actual).toEqual(expected)
+        errorAssert(actual, expected)
       })
     })
   })
@@ -111,7 +111,7 @@ describe('typeChecker declare', () => {
       `
       const actual = setup(input)
       const expected = []
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
 
     it('no emit error when it calculates correctly', () => {
@@ -124,7 +124,7 @@ describe('typeChecker declare', () => {
       `
       const actual = setup(input)
       const expected = []
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
 
     it('identify', () => {
@@ -134,7 +134,7 @@ describe('typeChecker declare', () => {
       `
       const actual = setup(input)
       const expected = []
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
 
     it('identify nest', () => {
@@ -147,7 +147,7 @@ describe('typeChecker declare', () => {
       `
       const actual = setup(input)
       const expected = []
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
 
     it('use identify twice', () => {
@@ -158,7 +158,7 @@ describe('typeChecker declare', () => {
       `
       const actual = setup(input)
       const expected = []
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
   })
 })

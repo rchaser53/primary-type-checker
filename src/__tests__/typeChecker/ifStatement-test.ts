@@ -1,6 +1,6 @@
 import { createIfCondtionIsNotBoolean, createCannotAssignOtherType } from '../../errors'
 import { PrimitiveType } from '../../types'
-import { setup } from './helper'
+import { errorAssert, setup } from './helper'
 
 describe('typeChecker ifStatement', () => {
   describe('error', () => {
@@ -14,7 +14,7 @@ describe('typeChecker ifStatement', () => {
         createIfCondtionIsNotBoolean(PrimitiveType.String),
         createIfCondtionIsNotBoolean(PrimitiveType.Number)
       ]
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
 
     it('if test using identifier', () => {
@@ -29,7 +29,7 @@ describe('typeChecker ifStatement', () => {
         createIfCondtionIsNotBoolean(PrimitiveType.Number),
         createIfCondtionIsNotBoolean(PrimitiveType.String)
       ]
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
 
     it('if block error', () => {
@@ -41,7 +41,7 @@ describe('typeChecker ifStatement', () => {
       `
       const actual = setup(input)
       const expected = [createCannotAssignOtherType(PrimitiveType.Number, PrimitiveType.String)]
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
 
     it('else if test', () => {
@@ -61,7 +61,7 @@ describe('typeChecker ifStatement', () => {
         createIfCondtionIsNotBoolean(PrimitiveType.Number),
         createIfCondtionIsNotBoolean(PrimitiveType.String)
       ]
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
 
     it('else if and else block error', () => {
@@ -80,7 +80,7 @@ describe('typeChecker ifStatement', () => {
         createCannotAssignOtherType(PrimitiveType.Number, PrimitiveType.Boolean),
         createCannotAssignOtherType(PrimitiveType.Number, PrimitiveType.String)
       ]
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
   })
 
@@ -92,7 +92,7 @@ describe('typeChecker ifStatement', () => {
       `
       const actual = setup(input)
       const expected = []
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
 
     it('use identifier', () => {
@@ -104,7 +104,7 @@ describe('typeChecker ifStatement', () => {
       `
       const actual = setup(input)
       const expected = []
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
 
     it('else if', () => {
@@ -119,7 +119,7 @@ describe('typeChecker ifStatement', () => {
       `
       const actual = setup(input)
       const expected = []
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
 
     it('if, else if and else block', () => {
@@ -135,7 +135,7 @@ describe('typeChecker ifStatement', () => {
       `
       const actual = setup(input)
       const expected = []
-      expect(actual).toEqual(expected)
+      errorAssert(actual, expected)
     })
   })
 })
