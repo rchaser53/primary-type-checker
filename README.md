@@ -1,3 +1,5 @@
+<img alt="" src="https://github.com/rchaser53/primary-type-checker/blob/master/demo.gif" >
+
 # how to install
 
 ```js
@@ -16,3 +18,5 @@ $ pmc filePath        # ex. pmc index.js
 - declaration
 - if condition
 - for statement
+- while statement
+- nest block
