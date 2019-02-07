@@ -30,7 +30,7 @@ export class ErrorType {
   }
 
   createMessage(): string {
-    return `${this.message} line: ${this.loc.start.line}`
+    return `L${this.loc.start.line}: ${this.message}`
   }
 }
 
