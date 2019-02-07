@@ -9,7 +9,7 @@ $ yarn add primary-type-checker  # or npm install primary-type-checker
 # how to play
 
 ```js
-$ pmc filePath        # ex. pmc index.js
+$ ptc filePath        # ex. ptc index.js
 ```
 
 ## support case
