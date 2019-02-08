@@ -1,4 +1,4 @@
-import { createCannotAssignOtherType, createLeftIsNotRight } from '../../errors'
+import { createUnknownIdentifier, createCannotAssignOtherType, createLeftIsNotRight } from '../../errors'
 import { PrimitiveType } from '../../types'
 import { errorAssert, setup } from './helper'
 
@@ -36,6 +36,15 @@ describe('typeChecker assign', () => {
       `
       const actual = setup(input)
       const expected = [createCannotAssignOtherType(PrimitiveType.Number, PrimitiveType.Boolean)]
+      errorAssert(actual, expected)
+    })
+
+    it('unknown identify error', () => {
+      const input = `
+        a = 3
+      `
+      const actual = setup(input)
+      const expected = [createUnknownIdentifier('a')]
       errorAssert(actual, expected)
     })
   })

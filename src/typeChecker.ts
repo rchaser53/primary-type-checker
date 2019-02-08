@@ -146,6 +146,10 @@ export default class TypeChecker {
     try {
       const leftType = this.tryResolveLeftIdentifier(left)
 
+      if (leftType === PrimitiveType.Undefined) {
+        throw createUnknownIdentifier(left.name, this.loc)
+      }
+
       let rightType
       if (right.type === NodeType.BinaryExpression) {
         rightType = this.resolveBinaryExpression(right.left, right.right)
