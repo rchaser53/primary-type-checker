@@ -9,7 +9,7 @@ import TypeChecker from './typeChecker'
 
 let cmdValue
 commander
-  .version('0.0.1')
+  .version('1.0.7')
   .arguments('*')
   .action((cmd) => {
     cmdValue = cmd

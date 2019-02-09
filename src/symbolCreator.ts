@@ -144,10 +144,12 @@ export default class SymbolCreator {
         break
     }
 
+    const count = this.calculateDeclareCount(this.currentScope.defs, id.name)
     this.currentScope.defs.push({
       name: id.name,
       type,
-      count: this.calculateDeclareCount(this.currentScope.defs, id.name)
+      count,
+      shouldUse: count === 0
     })
   }
 

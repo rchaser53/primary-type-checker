@@ -13,7 +13,8 @@ import { GlobalScopeId, NodeType } from './constants'
 const DummyDefininition = {
   name: 'dummy',
   type: PrimitiveType.Undefined,
-  count: 0
+  count: 0,
+  shouldUse: false
 }
 
 export default class TypeChecker {
@@ -108,7 +109,6 @@ export default class TypeChecker {
   walkWhileStatement(node) {
     const { body, test } = node
     this.loc = node.loc
-    console.log(test)
     const testType =
       test.type === NodeType.Identifier ? this.resolveRightIdentifier(test.scopeId, test.name, 0).type : test.type
     if (testType !== PrimitiveType.Boolean) {
@@ -196,6 +196,8 @@ export default class TypeChecker {
   resolveVariableDeclaration(node) {
     try {
       const { id, init } = node.declarations[0] // why Array?
+      const targetScope = this.findNameScope(id.scopeId)
+      targetScope.incrementDeclareCount(id.name)
       this.tryResolveLeftIdentifier(id)
 
       switch (init.type) {
@@ -238,9 +240,7 @@ export default class TypeChecker {
   // should remove Unknow in type
   resolveLeftIdentifier(nodeId: number, nodeName: string, count: number): Definiton {
     const targetScope = this.findNameScope(nodeId)
-    const resolved = targetScope.defs.find((def) => {
-      return def.name === nodeName && def.count === count
-    })
+    const resolved = targetScope.resolve(nodeName)
 
     if (resolved === undefined) {
       if (targetScope.parentId == null) {
@@ -262,9 +262,7 @@ export default class TypeChecker {
 
   resolveRightIdentifier(nodeId: number, nodeName: string, count: number): Definiton {
     const targetScope = this.findNameScope(nodeId)
-    const resolved = targetScope.defs.find((def) => {
-      return def.name === nodeName && def.count === count
-    })
+    const resolved = targetScope.resolve(nodeName)
 
     if (resolved === undefined) {
       if (targetScope.parentId == null) {

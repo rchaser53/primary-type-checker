@@ -39,9 +39,11 @@ describe('symbolCreator', () => {
             {
               count: 0,
               name: 'a',
+              shouldUse: true,
               type: PrimitiveType.Boolean
             }
           ],
+          declareCount: {},
           id: 1,
           parentId: null
         }
@@ -67,9 +69,11 @@ describe('symbolCreator', () => {
             {
               count: 0,
               name: 'a',
+              shouldUse: true,
               type: PrimitiveType.Boolean
             }
           ],
+          declareCount: {},
           id: 1,
           parentId: null
         },
@@ -78,9 +82,11 @@ describe('symbolCreator', () => {
             {
               count: 0,
               name: 'a',
+              shouldUse: true,
               type: PrimitiveType.Boolean
             }
           ],
+          declareCount: {},
           id: 2,
           parentId: 1
         },
@@ -89,9 +95,11 @@ describe('symbolCreator', () => {
             {
               count: 0,
               name: 'b',
+              shouldUse: true,
               type: PrimitiveType.Number
             }
           ],
+          declareCount: {},
           id: 3,
           parentId: 2
         }
@@ -117,9 +125,11 @@ describe('symbolCreator', () => {
             {
               count: 0,
               name: 'a',
+              shouldUse: true,
               type: PrimitiveType.String
             }
           ],
+          declareCount: {},
           id: 1,
           parentId: null
         },
@@ -128,9 +138,11 @@ describe('symbolCreator', () => {
             {
               count: 0,
               name: 'a',
+              shouldUse: true,
               type: PrimitiveType.Boolean
             }
           ],
+          declareCount: {},
           id: 2,
           parentId: 1
         },
@@ -139,9 +151,11 @@ describe('symbolCreator', () => {
             {
               count: 0,
               name: 'a',
+              shouldUse: true,
               type: PrimitiveType.Number
             }
           ],
+          declareCount: {},
           id: 3,
           parentId: 1
         }
