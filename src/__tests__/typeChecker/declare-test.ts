@@ -1,4 +1,4 @@
-import { createCannotBinaryOp, createLeftIsNotRight, createUnknownIdentifier } from '../../errors'
+import { createCannotBinaryOp, createCannotAssignOtherType, createLeftIsNotRight, createUnknownIdentifier } from '../../errors'
 import { PrimitiveType } from '../../types'
 import { errorAssert, setup } from './helper'
 
@@ -46,6 +46,17 @@ describe('typeChecker declare', () => {
       `
       const actual = setup(input)
       const expected = [createLeftIsNotRight(PrimitiveType.String, PrimitiveType.Number)]
+      errorAssert(actual, expected)
+    })
+
+    it('shadowing at same scope', () => {
+      const input = `
+        let a = 1;
+        let a = "abc";
+        a = 3;
+      `
+      const actual = setup(input)
+      const expected = [createCannotAssignOtherType(PrimitiveType.String, PrimitiveType.Number)]
       errorAssert(actual, expected)
     })
 
