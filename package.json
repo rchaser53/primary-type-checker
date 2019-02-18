@@ -1,6 +1,6 @@
 {
   "name": "primary-type-checker",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "primary type checker for JavaScript",
   "main": "dist/index.js",
   "bin": {

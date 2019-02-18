@@ -37,5 +37,5 @@ try {
 
   typeChecker.emitError()
 } catch (err) {
-  console.error(err)
+  console.error(err.toString())
 }
