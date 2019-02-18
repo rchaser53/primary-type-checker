@@ -1,4 +1,9 @@
-import { createCannotBinaryOp, createCannotAssignOtherType, createLeftIsNotRight, createUnknownIdentifier } from '../../errors'
+import {
+  createCannotBinaryOp,
+  createCannotAssignOtherType,
+  createLeftIsNotRight,
+  createUnknownIdentifier
+} from '../../errors'
 import { PrimitiveType } from '../../types'
 import { errorAssert, setup } from './helper'
 
